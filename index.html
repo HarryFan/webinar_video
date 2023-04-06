@@ -32,7 +32,7 @@
 
 
     <div class="embed-responsive embed-responsive-16by9">
-        <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/h-dPvvPAao4" allowfullscreen></iframe>
+        <iframe class="embed-responsive-item" src="" allowfullscreen></iframe>
     </div>
     <div class="container">
         <article>
@@ -69,56 +69,65 @@
             <p>
                 最後，謝謝大家的關注和參與，祝您們創業成功！
             </p>
-            <h3>
-                請記得，這個研討會的重播將於2023年4月9日晚上11:59結束，請盡快觀看
+            <h3 id="deadlineWarning">
+                請記得，這個研討會的重播將於2023年4月3日晚上11:59結束，請盡快觀看
             </h3>
+        </article>
     </div>
-    </article>
-    </div>
+
     <script>
         $(document).ready(function () {
 
-            // 檢查是否有觀看次數的 cookie，如果沒有就新增一個
-            var count = parseInt(getCookie("webinar_count"));
-            if (isNaN(count)) {
-                count = 130; // 將初始值改成 130
-            }
-            // 在網頁中顯示觀看次數
-            $("#viewCount").text(count);
-            // 每次網頁載入時，觀看次數加 1，並更新 cookie 和顯示的數字
-            setCookie("count", (count + 1).toString(), 4);
-            $("#viewCount").text(count + 1);
+            // 定義 YouTube 影片 ID
+            const videoId = "h-dPvvPAao4";
 
+            // 定義截止日期
+            const deadline = new Date("2023/4/9 23:59:59");
+
+            // 設定youtube影片
+            const embemItem = $(".embed-responsive-item");
+            embemItem.attr("src", `https://www.youtube.com/embed/${videoId}`);
+
+            // 設定 deadlineWarning
+            $("#deadlineWarning").text(`請記得，這個研討會的重播將於${deadline.toLocaleDateString()}晚上11:59結束，請盡快觀看`);
+
+
+
+            // 在網頁中顯示觀看次數並更新 Cookie
+            function updateViewCount() {
+                const count = parseInt(getCookie("webinar_count")) || 130;
+                $("#viewCount").text(count + 1);
+                setCookie("webinar_count", (count + 1).toString(), 4);
+            }
 
             // 取得指定名稱的 cookie 值
             function getCookie(name) {
-                var value = "; " + document.cookie;
-                var parts = value.split("; " + name + "=");
-                if (parts.length == 2) return parts.pop().split(";").shift();
+                const value = "; " + document.cookie;
+                const parts = value.split("; " + name + "=");
+                return parts.length === 2 ? parts.pop().split(";").shift() : null;
             }
 
             // 設定一個 cookie，有效期為 days 天
             function setCookie(name, value, days) {
-                var expires = "";
+                let expires = "";
                 if (days) {
-                    var date = new Date();
+                    const date = new Date();
                     date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
                     expires = "; expires=" + date.toUTCString();
                 }
                 document.cookie = name + "=" + (value || "") + expires + "; path=/";
             }
 
-            // 定義截止日期
-            const deadline = new Date("2023/4/9 23:59:59");
+            // 執行更新觀看次數
+            updateViewCount();
+
+
             // 取得當前日期
             const currentDate = new Date();
-            // 比較當前日期和截止日期，如果當前日期比截止日期晚，顯示遮罩層
-            if (currentDate > deadline) {
-                $(".overlay").show();
-            } else {
-                // 否則隱藏遮罩層
-                $(".overlay").hide();
-            }
+
+            // 比較當前日期和截止日期，如果當前日期比截止日期晚，顯示遮罩層，否則隱藏遮罩層
+            currentDate > deadline ? $(".overlay").show() : $(".overlay").hide();
+
             // 設定網頁標題為截止日期
             document.title = `截止日期 ${deadline.toLocaleDateString()} 23:59:59`;
 
